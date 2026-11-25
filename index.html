@@ -6,263 +6,307 @@
   <title>Communauté des Gamers eFootball du Burkina</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
-
-  <!-- Bandeau supérieur tricolore -->
   <div class="h-1.5 w-full flex">
     <div class="w-1/2 bg-red-600"></div>
     <div class="w-1/2 bg-emerald-600"></div>
   </div>
 
-  <!-- En-tête -->
-  <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-30">
-    <div class="max-w-4xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-      <div>
-        <span class="inline-block text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-          Division JcJ • Burkina Faso
-        </span>
-        <h1 class="text-lg sm:text-xl font-extrabold text-white mt-0.5">
-          Communauté des Gamers eFootball du Burkina
-        </h1>
+  <header class="bg-slate-900 border-b border-slate-800">
+    <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="inline-block text-xs font-bold tracking-wider uppercase px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-2">
+        DIVISION JCJ • BURKINA FASO
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+        Communauté des Gamers eFootball du Burkina
+      </h1>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <a href="https://chat.whatsapp.com" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition">
+          Rejoindre le groupe WhatsApp
+        </a>
       </div>
 
-      <a
-        href="https://chat.whatsapp.com/DaIrOX6poCIF7TcZHLzeHO?s=cl&p=a&iam=2"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm px-4 py-2.5 rounded-xl shadow-lg transition"
-      >
-        <span>Rejoindre le groupe WhatsApp</span>
-      </a>
+      <nav class="mt-5 grid grid-cols-3 gap-2">
+        <button id="btn-tab-classement" type="button" onclick="switchTab('classement')"
+                class="py-2.5 px-3 rounded-lg font-semibold text-sm bg-amber-500 text-slate-950 transition">
+          Classement Général
+        </button>
+        <button id="btn-tab-envoi" type="button" onclick="switchTab('envoi')"
+                class="py-2.5 px-3 rounded-lg font-semibold text-sm bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+          Envoyer ma capture
+        </button>
+        <button id="btn-tab-admin" type="button" onclick="switchTab('admin')"
+                class="py-2.5 px-3 rounded-lg font-semibold text-sm bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+          Validation Admin
+        </button>
+      </nav>
     </div>
-
-    <!-- Navigation par onglets -->
-    <nav class="max-w-4xl mx-auto px-4 flex gap-2 overflow-x-auto pb-2">
-      <button onclick="switchTab('classement')" id="tab-classement" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-amber-500 text-slate-950">
-        Classement Général
-      </button>
-      <button onclick="switchTab('soumettre')" id="tab-soumettre" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">
-        Envoyer ma capture
-      </button>
-      <button onclick="switchTab('admin')" id="tab-admin" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">
-        Validation Admin
-      </button>
-    </nav>
   </header>
 
-  <!-- Contenu principal -->
   <main class="max-w-4xl w-full mx-auto px-4 py-6 flex-1">
-
-    <!-- Configuration rapide si non encore reliée -->
-    <div id="config-banner" class="hidden mb-6 bg-amber-500/10 border border-amber-500/40 rounded-2xl p-4">
-      <h2 class="font-bold text-amber-300 text-sm mb-2">Connexion à Supabase requise</h2>
-      <p class="text-xs text-slate-300 mb-3">Colle ici ton <strong>Project URL</strong> et ta <strong>anon public key</strong> de Supabase (enregistrés sur ton appareil).</p>
-      <div class="grid sm:grid-cols-2 gap-2 mb-3">
-        <input id="cfg-url" type="text" placeholder="https://xxxx.supabase.co" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" />
-        <input id="cfg-key" type="text" placeholder="eyJhbGciOi..." class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" />
-      </div>
-      <button onclick="saveConfig()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-4 py-2 rounded-lg">
-        Enregistrer la connexion
-      </button>
-    </div>
-
-    <!-- ONGLET 1 : CLASSEMENT GÉNÉRAL -->
-    <section id="section-classement" class="space-y-4">
-      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-        <div>
-          <h2 class="text-base font-bold text-white">Classement Général des Joueurs</h2>
-          <p class="text-xs text-slate-400">Tous les participants validés sont classés par points. Le <span class="text-amber-400 font-semibold">Top 10</span> forme la base pour les matchs amicaux internationaux.</p>
-        </div>
-
-        <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
-          <button onclick="setPeriode('phase')" id="btn-phase" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white">
+    <!-- ONGLET 1 : CLASSEMENT -->
+    <section id="tab-classement" class="space-y-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <h2 class="text-xl font-bold text-white">Classement Général des Joueurs</h2>
+        <p class="text-sm text-slate-400 mt-1">
+          Tous les participants validés sont classés par points. Le Top 10 forme la base pour les matchs amicaux internationaux.
+        </p>
+        <div class="mt-4 inline-flex rounded-lg bg-slate-950 p-1 border border-slate-800">
+          <button id="btn-periode-phase" type="button" onclick="setPeriode('phase')"
+                  class="px-3.5 py-1.5 rounded-md text-sm font-semibold bg-emerald-600 text-white">
             Fin de Phase
           </button>
-          <button onclick="setPeriode('hebdo')" id="btn-hebdo" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white">
+          <button id="btn-periode-hebdo" type="button" onclick="setPeriode('hebdo')"
+                  class="px-3.5 py-1.5 rounded-md text-sm font-semibold text-slate-300 hover:text-white">
             Hebdomadaire
           </button>
         </div>
       </div>
 
-      <div id="leaderboard-container" class="space-y-2.5">
-        <div class="text-center py-10 text-slate-400 text-sm">Chargement du classement...</div>
+      <div id="status-box" class="bg-slate-900/70 border border-slate-800 rounded-xl p-6 text-center text-slate-300 text-sm">
+        Chargement du classement...
+      </div>
+
+      <div id="classement-container" class="hidden bg-slate-900 border border-slate-800 rounded-xl overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-slate-800 text-slate-400 bg-slate-950/60">
+              <th class="py-3 px-4">#</th>
+              <th class="py-3 px-4">Joueur</th>
+              <th class="py-3 px-4">Points</th>
+              <th class="py-3 px-4">Statut</th>
+            </tr>
+          </thead>
+          <tbody id="classement-tbody" class="divide-y divide-slate-800"></tbody>
+        </table>
       </div>
     </section>
 
-    <!-- ONGLET 2 : ENVOYER UNE CAPTURE -->
-    <section id="section-soumettre" class="hidden">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+    <!-- ONGLET 2 : ENVOYER CAPTURE -->
+    <section id="tab-envoi" class="hidden bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
+      <h2 class="text-xl font-bold text-white">Envoyer ma capture</h2>
+      <p class="text-sm text-slate-400">Remplis tes informations et joins ta capture d'écran pour soumission.</p>
+      <form id="capture-form" onsubmit="submitCapture(event)" class="space-y-4">
         <div>
-          <h2 class="text-base font-bold text-white">Soumettre une capture d'écran (Division JcJ)</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Tout joueur participant à la Division JcJ est bienvenu, quel que soit son niveau. L'outil tente de lire automatiquement tes points sur l'image : vérifie toujours le chiffre avant d'envoyer.</p>
+          <label class="block text-sm font-medium text-slate-200 mb-1">Pseudo / Nom du joueur</label>
+          <input id="player-name" type="text" required placeholder="Ex: FasoGamer226"
+                 class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3.5 py-2.5 text-white focus:outline-none focus:border-amber-500" />
         </div>
-
-        <!-- Capture d'écran + lecture automatique -->
-        <div class="bg-slate-950 border border-dashed border-slate-700 rounded-xl p-4 space-y-3">
-          <label class="block text-xs font-semibold text-emerald-400">
-            1. Choisir la capture d'écran de ta division
-          </label>
-          <input id="input-capture" type="file" accept="image/*" onchange="handleImageUpload(event)" class="block w-full text-xs text-slate-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500" />
-          <div id="ocr-status" class="text-xs text-amber-300 hidden">Analyse de l'image en cours...</div>
-          <img id="preview-img" class="hidden max-h-56 rounded-lg border border-slate-800 object-contain" alt="Aperçu capture" />
-        </div>
-
-        <!-- Infos joueur -->
-        <div class="grid sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">Pseudo eFootball *</label>
-            <input id="input-pseudo" type="text" required placeholder="Ex. : FasoStriker_BF" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white" />
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">ID Konami *</label>
-            <input id="input-konami" type="text" required placeholder="Ex. : 123-456-789" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white" />
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">Ville (Burkina Faso)</label>
-            <input id="input-ville" type="text" placeholder="Ex. : Ouagadougou, Bobo-Dioulasso..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white" />
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">Numéro WhatsApp</label>
-            <input id="input-tel" type="text" placeholder="Ex. : +226 XX XX XX XX" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white" />
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">Division actuelle *</label>
-            <select id="input-division" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white">
-              <option value="Division 1">Division 1</option>
-              <option value="Division 2">Division 2</option>
-              <option value="Division 3">Division 3</option>
-              <option value="Division 4">Division 4</option>
-              <option value="Division 5">Division 5</option>
-              <option value="Division 6">Division 6</option>
-              <option value="Division 7">Division 7</option>
-              <option value="Division 8">Division 8</option>
-              <option value="Division 9">Division 9</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">Points dans la division *</label>
-            <input id="input-points" type="number" required min="0" placeholder="Ex. : 1650" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white" />
-          </div>
-        </div>
-
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Type de classement</label>
-          <select id="input-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white">
-            <option value="phase">Classement de Fin de Phase</option>
-            <option value="hebdo">Classement Hebdomadaire</option>
-          </select>
+          <label class="block text-sm font-medium text-slate-200 mb-1">Points / Score obtenu</label>
+          <input id="player-points" type="number" required placeholder="Ex: 1500"
+                 class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3.5 py-2.5 text-white focus:outline-none focus:border-amber-500" />
         </div>
-
-        <div id="submit-feedback" class="hidden text-xs font-semibold p-3 rounded-xl"></div>
-
-        <div class="flex flex-wrap gap-3 pt-1">
-          <button onclick="submitScore()" id="btn-submit" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm px-5 py-3 rounded-xl transition">
-            Envoyer ma capture pour classement
-          </button>
-          <a
-            href="https://chat.whatsapp.com/DaIrOX6poCIF7TcZHLzeHO?s=cl&p=a&iam=2"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="bg-slate-800 hover:bg-slate-700 text-emerald-400 font-semibold text-sm px-4 py-3 rounded-xl transition"
-          >
-            Envoyer aussi sur WhatsApp
-          </a>
+        <div>
+          <label class="block text-sm font-medium text-slate-200 mb-1">Capture d'écran</label>
+          <input id="player-file" type="file" accept="image/*" required
+                 class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-300" />
         </div>
-      </div>
+        <button type="submit"
+                class="w-full py-2.5 px-4 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition">
+          Envoyer ma demande
+        </button>
+      </form>
+      <div id="envoi-feedback" class="text-sm text-emerald-400"></div>
     </section>
 
     <!-- ONGLET 3 : VALIDATION ADMIN -->
-    <section id="section-admin" class="hidden space-y-4">
-      <div id="admin-lock" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-md">
-        <h2 class="text-base font-bold text-white mb-1">Espace Administrateur / Modérateur</h2>
-        <p class="text-xs text-slate-400 mb-3">Code PIN par défaut : <code class="text-amber-300">2260</code> (tu pourras le changer dans le code plus tard).</p>
+    <section id="tab-admin" class="hidden bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
+      <h2 class="text-xl font-bold text-white">Validation Admin</h2>
+      <div id="admin-login" class="space-y-3">
+        <label class="block text-sm font-medium text-slate-200">Code PIN Administrateur</label>
         <div class="flex gap-2">
-          <input id="admin-pin" type="password" placeholder="Code PIN" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white flex-1" />
-          <button onclick="unlockAdmin()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm px-4 py-2 rounded-xl">
+          <input id="admin-pin-input" type="password" inputmode="numeric" placeholder="Code PIN"
+                 class="flex-1 rounded-lg bg-slate-950 border border-slate-700 px-3.5 py-2 text-white focus:outline-none focus:border-amber-500" />
+          <button type="button" onclick="checkAdminPin()"
+                  class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm">
             Entrer
           </button>
         </div>
+        <p id="admin-pin-error" class="text-sm text-red-400"></p>
       </div>
 
-      <div id="admin-panel" class="hidden space-y-3">
+      <div id="admin-panel" class="hidden space-y-4">
         <div class="flex items-center justify-between">
-          <h2 class="text-base font-bold text-white">Captures en attente de validation</h2>
-          <button onclick="loadAdminPending()" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg">Actualiser</button>
+          <span class="text-sm font-semibold text-emerald-400">Connecté en mode Administrateur</span>
+          <button type="button" onclick="loadAdminPending()"
+                  class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white">
+            Actualiser
+          </button>
         </div>
-        <div id="admin-list" class="space-y-3"></div>
+        <div id="admin-list" class="space-y-3 text-sm text-slate-300"></div>
       </div>
     </section>
-
   </main>
 
   <footer class="border-t border-slate-900 py-4 text-center text-xs text-slate-500">
-    Communauté des Gamers eFootball du Burkina • Division JcJ
+    Communauté des Gamers eFootball du Burkina • Division JCJ
   </footer>
 
   <script>
-    // Remplace éventuellement directement ici les deux valeurs entre guillemets si tu le souhaites
     const DEFAULT_URL = "https://dxpcpkrkoskcdefrnjmn.supabase.co";
-    const DEFAULT_KEY = "sb_publishable_jpE0zG3-iVsmzWnXdJu7FA_nICPb0bP";
+    const DEFAULT_KEY = "sb_publishable_jpE0zG3-iVsmzWhxDJu7FA_nIcPb08p";
     const ADMIN_PIN = "2260";
 
     let supabaseClient = null;
     let currentPeriode = "phase";
-    let uploadedFile = null;
 
-    function getCredentials() {
-      const url = localStorage.getItem("sb_url") || DEFAULT_URL;
-      const key = localStorage.getItem("sb_key") || DEFAULT_KEY;
-      return { url, key };
-    }
-
-    function saveConfig() {
-      const url = document.getElementById("cfg-url").value.trim();
-      const key = document.getElementById("cfg-key").value.trim();
-      if (!url || !key) return alert("Merci de remplir l'URL et la clé publique.");
-      localStorage.setItem("sb_url", url);
-      localStorage.setItem("sb_key", key);
-      initApp();
-    }
-
-    function initApp() {
-      const { url, key } = getCredentials();
-      if (!url || !key) {
-        document.getElementById("config-banner").classList.remove("hidden");
-        document.getElementById("cfg-url").value = url;
-        document.getElementById("cfg-key").value = key;
-        document.getElementById("leaderboard-container").innerHTML =
-          `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center text-xs text-slate-400">
-            Configure d'abord ta connexion Supabase ci-dessus pour afficher le classement.
-          </div>`;
-        return;
-      }
-      document.getElementById("config-banner").classList.add("hidden");
-      supabaseClient = window.supabase.createClient(url, key);
-      loadLeaderboard();
-    }
-
-    function switchTab(tab) {
-      ["classement", "soumettre", "admin"].forEach((t) => {
-        document.getElementById(`section-${t}`).classList.toggle("hidden", t !== tab);
-        const btn = document.getElementById(`tab-${t}`);
-        if (t === tab) {
-          btn.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-amber-500 text-slate-950";
-        } else {
-          btn.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700";
+    function switchTab(tabName) {
+      ["classement", "envoi", "admin"].forEach((name) => {
+        const section = document.getElementById("tab-" + name);
+        const btn = document.getElementById("btn-tab-" + name);
+        if (section) {
+          if (name === tabName) section.classList.remove("hidden");
+          else section.classList.add("hidden");
+        }
+        if (btn) {
+          if (name === tabName) {
+            btn.className = "py-2.5 px-3 rounded-lg font-semibold text-sm bg-amber-500 text-slate-950 transition";
+          } else {
+            btn.className = "py-2.5 px-3 rounded-lg font-semibold text-sm bg-slate-800 hover:bg-slate-700 text-slate-200 transition";
+          }
         }
       });
-      if (tab === "classement") loadLeaderboard();
-      if (tab === "admin" && !document.getElementById("admin-panel").classList.contains("hidden")) {
-        loadAdminPending();
-      }
     }
 
     function setPeriode(periode) {
       currentPeriode = periode;
-      document.getElementById("btn-phase").className =
-        periode === "phase"
-          ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white"
-          : "px-3 py-1
+      const btnPhase = document.getElementById("btn-periode-phase");
+      const btnHebdo = document.getElementById("btn-periode-hebdo");
+      if (periode === "phase") {
+        btnPhase.className = "px-3.5 py-1.5 rounded-md text-sm font-semibold bg-emerald-600 text-white";
+        btnHebdo.className = "px-3.5 py-1.5 rounded-md text-sm font-semibold text-slate-300 hover:text-white";
+      } else {
+        btnHebdo.className = "px-3.5 py-1.5 rounded-md text-sm font-semibold bg-emerald-600 text-white";
+        btnPhase.className = "px-3.5 py-1.5 rounded-md text-sm font-semibold text-slate-300 hover:text-white";
+      }
+      loadClassement();
+    }
+
+    function setStatus(message, isError = false) {
+      const statusBox = document.getElementById("status-box");
+      if (!statusBox) return;
+      statusBox.classList.remove("hidden");
+      statusBox.className = isError
+        ? "bg-red-950/50 border border-red-800 rounded-xl p-5 text-center text-red-200 text-sm"
+        : "bg-slate-900/70 border border-slate-800 rounded-xl p-6 text-center text-slate-300 text-sm";
+      statusBox.textContent = message;
+    }
+
+    async function loadClassement() {
+      const container = document.getElementById("classement-container");
+      const tbody = document.getElementById("classement-tbody");
+      if (!supabaseClient) {
+        setStatus("Client Supabase non initialisé (vérifie la connexion réseau ou les clés).", true);
+        return;
+      }
+      setStatus("Chargement du classement...");
+      if (container) container.classList.add("hidden");
+
+      try {
+        const { data, error } = await supabaseClient
+          .from("joueurs")
+          .select("*")
+          .order("points", { ascending: false });
+
+        if (error) {
+          setStatus("Erreur Supabase lors du chargement : " + error.message, true);
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          setStatus("Aucun joueur validé pour le moment dans le classement.");
+          return;
+        }
+
+        tbody.innerHTML = data.map((row, index) => `
+          <tr>
+            <td class="py-3 px-4 font-bold text-amber-400">${index + 1}</td>
+            <td class="py-3 px-4 text-white font-medium">${row.pseudo || row.nom || "Joueur"}</td>
+            <td class="py-3 px-4 text-emerald-400 font-semibold">${row.points ?? 0}</td>
+            <td class="py-3 px-4 text-slate-400">${row.statut || "Validé"}</td>
+          </tr>
+        `).join("");
+
+        document.getElementById("status-box").classList.add("hidden");
+        container.classList.remove("hidden");
+      } catch (err) {
+        setStatus("Erreur inattendue : " + (err && err.message ? err.message : err), true);
+      }
+    }
+
+    function checkAdminPin() {
+      const input = document.getElementById("admin-pin-input");
+      const errEl = document.getElementById("admin-pin-error");
+      if (input.value.trim() === ADMIN_PIN) {
+        errEl.textContent = "";
+        document.getElementById("admin-login").classList.add("hidden");
+        document.getElementById("admin-panel").classList.remove("hidden");
+        loadAdminPending();
+      } else {
+        errEl.textContent = "Code PIN incorrect.";
+      }
+    }
+
+    async function loadAdminPending() {
+      const listEl = document.getElementById("admin-list");
+      if (!supabaseClient) {
+        listEl.textContent = "Supabase non connecté.";
+        return;
+      }
+      listEl.textContent = "Chargement des demandes...";
+      const { data, error } = await supabaseClient.from("joueurs").select("*");
+      if (error) {
+        listEl.textContent = "Erreur : " + error.message;
+        return;
+      }
+      if (!data || data.length === 0) {
+        listEl.textContent = "Aucune soumission enregistrée pour l'instant.";
+        return;
+      }
+      listEl.innerHTML = data.map((item) => `
+        <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
+          <div>
+            <div class="font-semibold text-white">${item.pseudo || item.nom || "Joueur"}</div>
+            <div class="text-xs text-slate-400">Points : ${item.points ?? 0} • Statut : ${item.statut || "En attente"}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function submitCapture(event) {
+      event.preventDefault();
+      const feedback = document.getElementById("envoi-feedback");
+      if (!supabaseClient) {
+        feedback.className = "text-sm text-red-400";
+        feedback.textContent = "Connexion Supabase indisponible.";
+        return;
+      }
+      const pseudo = document.getElementById("player-name").value.trim();
+      const points = Number(document.getElementById("player-points").value);
+      const { error } = await supabaseClient.from("joueurs").insert([{ pseudo, points, statut: "En attente" }]);
+      if (error) {
+        feedback.className = "text-sm text-red-400";
+        feedback.textContent = "Erreur d'envoi : " + error.message;
+      } else {
+        feedback.className = "text-sm text-emerald-400";
+        feedback.textContent = "Demande envoyée avec succès !";
+        document.getElementById("capture-form").reset();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      switchTab("classement");
+      if (window.supabase && typeof window.supabase.createClient === "function") {
+        supabaseClient = window.supabase.createClient(DEFAULT_URL, DEFAULT_KEY);
+        loadClassement();
+      } else {
+        setStatus("Impossible de charger la bibliothèque Supabase (vérifie ta connexion internet).", true);
+      }
+    });
+  </script>
+</body>
+        </html>
   
